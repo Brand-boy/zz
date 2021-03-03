@@ -1,0 +1,133 @@
+#!/usr/bin/python2
+#coding=utf-8 
+import os,sys,time,datetime,random,hashlib,re,threading,json,urllib,cookielib,requests,mechanize
+from multiprocessing.pool import ThreadPool
+from requests.exceptions import ConnectionError
+from mechanize import Browser
+
+
+reload(sys)
+sys.setdefaultencoding('utf8')
+br = mechanize.Browser()
+br.set_handle_robots(False)
+br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(),max_time=1)
+br.addheaders = [('User-Agent', 'Opera/12.0 (Android; Opera Mini/52.2.2254/85. U; id) Presto/2.12.423 Version/12.16')]
+
+
+
+
+def jalan(z):
+    for e in z + '\n':
+        sys.stdout.write(e) 
+        sys.stdout.flush()
+        time.sleep(3.0 / 200)
+
+                                   
+back = 0
+successful = []
+cpb = []
+oks = []
+id = []
+
+def menu():
+	os.system('clear')
+	os.system('figlet -f slant S O M I ')
+	os.system('figlet -f slant REPORT ')
+        print "\033[1;93m\033[1;97m> \033[1;91m1.\x1b[1;92m CoviD19 Death Report.  "
+        time.sleep(0.05)
+	print "\033[1;93m\033[1;97m> \033[1;91m2.\x1b[1;92m Target  Profile.  "
+        time.sleep(0.05)
+        print "\033[1;93m\033[1;97m> \033[1;91m3.\x1b[1;92m Start   Reporting."
+        time.sleep(0.05)
+        print "\033[1;93m\033[1;97m> \033[1;91m4.\x1b[1;92m Start   Report1.  "
+        time.sleep(0.05)
+        print "\033[1;93m\033[1;97m> \033[1;91m5.\x1b[1;92m Start   Report2.  "
+        time.sleep(0.05)
+        print "\033[1;93m\033[1;97m> \033[1;91m6.\x1b[1;92m Start   Report3.  "
+        time.sleep(0.05)
+        print "\033[1;93m\033[1;97m> \033[1;91m7.\x1b[1;92m Start   Report4.  "
+        time.sleep(0.05)
+	print "\033[1;93m\033[1;91m> \033[1;91m0.\033[1;91m Back             "
+	pilih_fighter()
+
+def pilih_fighter():
+	peak = raw_input("\n\033[1;91mChoose an Option>>> \033[1;95m")
+	if peak =="":
+		print "\x1b[1;91mFill in correctly"
+		pilih_fighter()
+        elif peak =="1":
+	        os.system('xdg-open https://m.facebook.com/help/contact/228813257197480?refid=69')
+	        pilih_fighter()
+	elif peak =="2":
+		report()
+        elif peak =="3":
+	        rep()
+        elif peak =="4":
+                test1()
+        elif peak =="5":
+	        test2()
+        elif peak =="6":
+	        test3()
+        elif peak =="7":
+	        test4()
+	elif peak =="0":
+		menu()
+def report():
+        id = str(raw_input('\n  \x1b[1;93m[*] Input ID target: '))
+        self.max = int(raw_input('  \x1b[1;93m[*] How many (ex:10): '))
+        response = self.requestGet(self.base_url + '/' + id)
+        bs = parser(response, 'html.parser')
+        if 'Page not found' in str(bs) or 'Content Not Found' in str(bs):
+            exit('\n  \x1b[1;91m[!] Profile not found\x1b[0m')
+        url = self.base_url + '/' + id + '?v=timeline'
+        self.getPostProfile(url)
+        if len(self.post) < self.max:
+            print '\n  \x1b[1;93m[*] Can only retrieve% s posts' % str(len(self.post))
+        print '\n  \x1b[1;93m[*] Report profile \x1b[1;91m%s\x1b[0m ' % bs.title.text
+        try:
+            tombol = bs.find('a', string='Others')['href']
+            response = self.requestGet(self.base_url + tombol)
+            tombol = bs.find('a', string='Search for Support or Report Profil')['href']
+            response = self.requestGet(self.base_url + tombol)
+            bs = parser(response, 'html.parser')
+            fb_dtsg = bs.find('input', {'name': 'fb_dtsg'})['value']
+            jazoest = bs.find('input', {'name': 'jazoest'})['value']
+            for x in bs('form'):
+                action = x['action']
+
+            form = {'fb_dtsg': fb_dtsg, 
+               'jazoest': jazoest, 'tag': 'profile_fake_name'}
+            response = self.requestPost(self.base_url + action, form)
+            bs = parser(response, 'html.parser')
+            fb_dtsg = bs.find('input', {'name': 'fb_dtsg'})['value']
+            jazoest = bs.find('input', {'name': 'jazoest'})['value']
+            for x in bs('form'):
+                action = x['action']
+
+            form = {'fb_dtsg': fb_dtsg, 
+               'jazoest': jazoest, 'action_key': 'FRX_PROFILE_REPORT_CONFIRMATION'}
+            response = self.requestPost(self.base_url + action, form)
+            bs = parser(response, 'html.parser')
+            for x in bs('form'):
+                action = x['action']
+
+            fb_dtsg = bs.find('input', {'name': 'fb_dtsg'})['value']
+            jazoest = bs.find('input', {'name': 'jazoest'})['value']
+            form = {'fb_dtsg': fb_dtsg, 
+               'jazoest': jazoest, 'checked': 'yes', 
+               'action': 'Laporkan'}
+            self.requestPost(self.base_url + action, form)
+            print '  \x1b[1;92m[*] Berhasil reported'
+        except:
+            print '  \x1b[1;91m[!] Failed :(\x1b[0m'
+
+        if len(self.post) == 0:
+            exit('  \x1b[1;91m[!]There are no posts to report :(\x1b[0m')
+        print '  \x1b[1;93m[*] Start reporting posts...'
+        m = ThreadPool(10)
+        m.map(self.report1, self.post)
+        exit('\n  \x1b[1;93m[*] Done\x1b[0m')
+  
+    
+if __name__ == '__main__':
+    menu()
